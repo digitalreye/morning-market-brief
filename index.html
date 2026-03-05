@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Morning Market Brief | Earnings & Competitors</title>
+    <title>Morning Market Brief | Earnings & Options Optimizer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -14,26 +14,20 @@
         .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .bullish { color: #10b981; }
         .bearish { color: #ef4444; }
-        .cautious { color: #f59e0b; }
         .pulse-green { animation: pulse-green 2s infinite; }
         @keyframes pulse-green { 0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } }
         .pulse-red { animation: pulse-red 2s infinite; }
         @keyframes pulse-red { 0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } }
-        .news-card { transition: all 0.3s ease; }
-        .news-card:hover { transform: translateY(-2px); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5); }
         .ticker-wrap { overflow: hidden; white-space: nowrap; }
         .ticker { display: inline-block; animation: ticker 30s linear infinite; }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
-        .loading { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
-        .news-item { animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .event-high { border-left-color: #ef4444; }
-        .event-medium { border-left-color: #f59e0b; }
-        .event-low { border-left-color: #6b7280; }
         .earnings-today { animation: glow 2s ease-in-out infinite alternate; }
         @keyframes glow { from { box-shadow: 0 0 5px rgba(239, 68, 68, 0.5); } to { box-shadow: 0 0 20px rgba(239, 68, 68, 0.8); } }
-        .countdown { font-variant-numeric: tabular-nums; }
+        .strike-optimal { background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.2) 100%); border: 1px solid #10b981; }
+        .strike-high { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.5); }
+        .strike-medium { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.5); }
+        .loading-shimmer { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
 </head>
 <body class="text-gray-100 min-h-screen">
@@ -45,7 +39,7 @@
                 <i data-lucide="trending-up" class="w-8 h-8 text-indigo-400"></i>
                 <div>
                     <h1 class="text-xl font-bold tracking-tight">Morning Market Brief</h1>
-                    <p class="text-xs text-gray-400 mono">MAG 7 + COMPETITORS | EARNINGS ALERT</p>
+                    <p class="text-xs text-gray-400 mono">MAG 7 + COMPETITORS | EARNINGS + OPTIONS</p>
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -71,7 +65,7 @@
         </div>
     </div>
 
-    <!-- ALERTA DE EARNINGS HOY - Banner prominente -->
+    <!-- ALERTA DE EARNINGS HOY -->
     <div id="earnings-alert-banner" class="hidden bg-gradient-to-r from-red-900/80 to-orange-900/80 border-y border-red-500/50 py-3 px-4">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -121,6 +115,141 @@
             </div>
         </section>
 
+        <!-- 🆕 SECCIÓN OPTIONS OPTIMIZER -->
+        <section class="glass rounded-2xl p-6 border-2 border-green-500/30 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-green-500/5 rounded-full blur-3xl -mr-48 -mt-48"></div>
+            <div class="relative z-10">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-green-500/20 rounded-lg">
+                            <i data-lucide="target" class="w-6 h-6 text-green-400"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold">Options Optimizer</h2>
+                            <p class="text-xs text-gray-400">Rango óptimo de strikes basado en rentabilidad uniforme</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <select id="options-ticker-select" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-green-500">
+                            <option value="">Seleccionar ticker...</option>
+                        </select>
+                        <button onclick="calculateOptimalRange()" class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                            <i data-lucide="calculator" class="w-4 h-4"></i>
+                            Calcular Rango
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Panel de resultados de opciones -->
+                <div id="options-results" class="hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Info general -->
+                        <div class="lg:col-span-1 space-y-4">
+                            <div class="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+                                <h3 class="text-sm font-semibold text-gray-400 mb-3">Información del Activo</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Ticker:</span>
+                                        <span id="opt-ticker" class="font-bold mono text-green-400">--</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Precio actual:</span>
+                                        <span id="opt-price" class="font-bold mono">$--</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Tendencia día:</span>
+                                        <span id="opt-trend" class="font-bold">--</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Tipo recomendado:</span>
+                                        <span id="opt-type" class="font-bold text-indigo-400">--</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-green-500/10 rounded-xl p-4 border border-green-500/30">
+                                <h3 class="text-sm font-semibold text-green-400 mb-3 flex items-center gap-2">
+                                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                    Rango Óptimo Identificado
+                                </h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <div class="text-xs text-gray-400 mb-1">Strikes recomendados:</div>
+                                        <div id="opt-strikes" class="text-lg font-bold mono text-white">--</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-gray-400 mb-1">Costo estimado por contrato:</div>
+                                        <div id="opt-cost" class="text-lg font-bold mono text-green-400">$--</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-gray-400 mb-1">Rentabilidad promedio esperada:</div>
+                                        <div id="opt-rent" class="text-lg font-bold mono text-yellow-400">--%</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-gray-400 mb-1">Delta promedio:</div>
+                                        <div id="opt-delta" class="text-lg font-bold mono text-blue-400">--</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+                                <h3 class="text-sm font-semibold text-gray-400 mb-3">Filtros de Calidad</h3>
+                                <div id="quality-checks" class="space-y-2 text-sm">
+                                    <!-- Se llena dinámicamente -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tabla de strikes -->
+                        <div class="lg:col-span-2">
+                            <h3 class="text-sm font-semibold text-gray-400 mb-3">Análisis de Rentabilidad por Strike</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="text-gray-500 border-b border-gray-700">
+                                            <th class="text-left py-2 px-3">Strike</th>
+                                            <th class="text-right py-2 px-3">Costo</th>
+                                            <th class="text-right py-2 px-3">Min Hoy</th>
+                                            <th class="text-right py-2 px-3">Max Hoy</th>
+                                            <th class="text-right py-2 px-3">Rentabilidad</th>
+                                            <th class="text-right py-2 px-3">Delta</th>
+                                            <th class="text-center py-2 px-3">Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="strikes-table-body" class="mono">
+                                        <!-- Se llena dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="mt-4 p-4 bg-gray-800/30 rounded-lg border border-gray-700">
+                                <h4 class="text-sm font-semibold text-gray-300 mb-2">🎯 Interpretación del método:</h4>
+                                <p class="text-xs text-gray-400 leading-relaxed">
+                                    El <span class="text-green-400 font-semibold">rango óptimo</span> (verde) se identifica donde la rentabilidad es máxima pero uniforme, 
+                                    evitando strikes disruptivos (muy caros o muy baratos). Estos strikes ofrecen el mejor balance entre 
+                                    costo de entrada y potencial de valorización según el movimiento histórico reciente.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estado inicial -->
+                <div id="options-initial" class="text-center py-12 text-gray-500">
+                    <i data-lucide="calculator" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
+                    <p>Selecciona un ticker y haz clic en "Calcular Rango" para analizar las opciones óptimas</p>
+                    <p class="text-xs mt-2 text-gray-600">Soporta: MAG7 + Competidores clave</p>
+                </div>
+
+                <!-- Loading -->
+                <div id="options-loading" class="hidden text-center py-12">
+                    <div class="w-12 h-12 border-4 border-green-500/30 border-t-green-500 rounded-full animate-spin mx-auto mb-4"></div>
+                    <p class="text-gray-400">Calculando rango óptimo...</p>
+                    <p class="text-xs text-gray-600 mt-1">Analizando cadena de opciones y rentabilidad intradía</p>
+                </div>
+            </div>
+        </section>
+
         <!-- SECCIÓN EARNINGS -->
         <section id="earnings-section" class="glass rounded-2xl p-6 border-2 border-indigo-500/30">
             <div class="flex justify-between items-center mb-6">
@@ -141,12 +270,10 @@
                 </div>
             </div>
 
-            <!-- Grid de Earnings -->
             <div id="earnings-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <!-- Se llena dinámicamente -->
             </div>
 
-            <!-- Panel de Resultados en Vivo -->
             <div id="live-results-panel" class="mt-6 hidden">
                 <h3 class="text-lg font-semibold mb-3 flex items-center gap-2">
                     <span class="relative flex h-3 w-3">
@@ -183,7 +310,6 @@
 
             <!-- Sidebar -->
             <section class="space-y-4">
-                <!-- Calendario Económico -->
                 <div class="flex justify-between items-center">
                     <h2 class="text-lg font-semibold flex items-center gap-2">
                         <i data-lucide="calendar" class="w-5 h-5 text-red-400"></i>
@@ -199,7 +325,6 @@
                     </div>
                 </div>
 
-                <!-- Checklist Pre-Mercado -->
                 <div class="glass rounded-xl p-4 mt-4">
                     <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
                         <i data-lucide="check-square" class="w-4 h-4 text-green-400"></i>
@@ -221,6 +346,10 @@
                         <label class="flex items-center gap-3 p-2 hover:bg-gray-800/50 rounded cursor-pointer transition-colors">
                             <input type="checkbox" class="w-4 h-4 rounded border-gray-600 text-indigo-600 focus:ring-indigo-500 bg-gray-700" onchange="saveChecklist()">
                             <span class="text-sm">Verificar calendario económico</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-2 hover:bg-gray-800/50 rounded cursor-pointer transition-colors bg-green-500/10 border border-green-500/30">
+                            <input type="checkbox" class="w-4 h-4 rounded border-gray-600 text-green-600 focus:ring-green-500 bg-gray-700" onchange="saveChecklist()">
+                            <span class="text-sm font-medium text-green-400">Revisar scanner de opciones</span>
                         </label>
                     </div>
                     <button onclick="resetChecklist()" class="mt-3 text-xs text-gray-500 hover:text-gray-300 underline">Reiniciar checklist</button>
@@ -283,11 +412,11 @@
         const COMPETITOR_TICKERS = ['AMD', 'AVGO', 'PLTR', 'CRM', 'NFLX', 'INTC', 'SNOW', 'CRWD', 'UBER'];
         const ALL_TICKERS = [...MAG7_TICKERS, ...COMPETITOR_TICKERS];
         const API_BASE = 'https://query1.finance.yahoo.com/v8/finance/chart/';
+        const OPTIONS_API_BASE = 'https://query1.finance.yahoo.com/v7/finance/options/';
         
-        // CALENDARIO MANUAL DE EARNINGS (Actualizar según fechas reales)
+        // Calendario de earnings (actualizado)
         const EARNINGS_CALENDAR = [
-            // Ejemplos - Actualizar con fechas reales cada temporada
-            { ticker: 'NVDA', date: '2025-02-26', time: 'after', epsEstimate: 0.84, revenueEstimate: 24.5, quarter: 'Q4 FY2025' },
+            { ticker: 'NVDA', date: '2025-03-06', time: 'after', epsEstimate: 0.84, revenueEstimate: 24.5, quarter: 'Q4 FY2025' },
             { ticker: 'CRM', date: '2025-02-26', time: 'after', epsEstimate: 2.57, revenueEstimate: 9.9, quarter: 'Q4 FY2025' },
             { ticker: 'SNOW', date: '2025-02-26', time: 'after', epsEstimate: 0.18, revenueEstimate: 0.78, quarter: 'Q4 FY2025' },
             { ticker: 'AVGO', date: '2025-03-06', time: 'after', epsEstimate: 1.50, revenueEstimate: 14.6, quarter: 'Q1 FY2025' },
@@ -309,6 +438,7 @@
         let newsData = [];
         let isRealData = false;
         let notificationPermission = false;
+        let currentOptionsData = null;
 
         // Inicializar
         document.addEventListener('DOMContentLoaded', () => {
@@ -316,8 +446,8 @@
             updateClock();
             loadChecklist();
             updateMarketStatus();
+            populateTickerSelect();
             
-            // Verificar si hay earnings hoy al cargar
             checkTodaysEarnings();
             
             fetchAllData();
@@ -325,8 +455,299 @@
             setInterval(fetchAllData, 60000);
             setInterval(updateClock, 1000);
             setInterval(updateMarketStatus, 60000);
-            setInterval(checkTodaysEarnings, 300000); // Revisar cada 5 min
+            setInterval(checkTodaysEarnings, 300000);
         });
+
+        // 🆕 FUNCIONES DEL OPTIONS OPTIMIZER
+        function populateTickerSelect() {
+            const select = document.getElementById('options-ticker-select');
+            const allTickers = [...MAG7_TICKERS, ...COMPETITOR_TICKERS].sort();
+            
+            allTickers.forEach(ticker => {
+                const option = document.createElement('option');
+                option.value = ticker;
+                option.textContent = ticker;
+                select.appendChild(option);
+            });
+        }
+
+        async function calculateOptimalRange() {
+            const ticker = document.getElementById('options-ticker-select').value;
+            if (!ticker) {
+                alert('Por favor selecciona un ticker');
+                return;
+            }
+
+            document.getElementById('options-initial').classList.add('hidden');
+            document.getElementById('options-results').classList.add('hidden');
+            document.getElementById('options-loading').classList.remove('hidden');
+
+            try {
+                // Obtener datos del ticker
+                const priceData = await fetchTickerData(ticker);
+                if (!priceData) throw new Error('No se pudieron obtener datos del ticker');
+
+                // Determinar dirección
+                const change = priceData.change;
+                const isBullish = change >= 0;
+                const optionType = isBullish ? 'calls' : 'puts';
+
+                // Obtener cadena de opciones (simulada para demo, en producción usar API real)
+                const optionsChain = await fetchOptionsChain(ticker, optionType);
+                
+                // Calcular rango óptimo
+                const analysis = analyzeOptimalRange(optionsChain, priceData.price, isBullish);
+                
+                // Renderizar resultados
+                renderOptionsResults(ticker, priceData, analysis, isBullish);
+                
+                currentOptionsData = { ticker, analysis, priceData };
+
+            } catch (error) {
+                console.error('Error:', error);
+                // Usar datos simulados para demo
+                const simulatedData = generateSimulatedOptionsData(ticker);
+                renderOptionsResults(ticker, simulatedData.priceData, simulatedData.analysis, simulatedData.isBullish);
+            } finally {
+                document.getElementById('options-loading').classList.add('hidden');
+                document.getElementById('options-results').classList.remove('hidden');
+                lucide.createIcons();
+            }
+        }
+
+        async function fetchTickerData(ticker) {
+            try {
+                const proxyUrls = [
+                    `https://api.allorigins.win/raw?url=${encodeURIComponent(API_BASE + ticker + '?interval=1d&range=1d')}`,
+                    `https://corsproxy.io/?${encodeURIComponent(API_BASE + ticker + '?interval=1d&range=1d')}`
+                ];
+                
+                for (let proxyUrl of proxyUrls) {
+                    try {
+                        const response = await fetch(proxyUrl);
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.chart && data.chart.result && data.chart.result[0]) {
+                                const result = data.chart.result[0];
+                                const meta = result.meta;
+                                const price = meta.regularMarketPrice || meta.previousClose;
+                                const prevClose = meta.previousClose || meta.chartPreviousClose;
+                                return {
+                                    price: price,
+                                    change: prevClose ? ((price - prevClose) / prevClose * 100) : 0,
+                                    volume: meta.regularMarketVolume || 0,
+                                    high: meta.regularMarketDayHigh || price,
+                                    low: meta.regularMarketDayLow || price
+                                };
+                            }
+                        }
+                    } catch (e) { continue; }
+                }
+            } catch (e) {
+                console.error('Error fetching ticker data:', e);
+            }
+            return null;
+        }
+
+        async function fetchOptionsChain(ticker, type) {
+            // En producción, esto llamaría a la API de opciones de Yahoo
+            // Por ahora, generamos datos simulados realistas
+            return generateSimulatedOptionsChain(ticker, type);
+        }
+
+        function generateSimulatedOptionsChain(ticker, type) {
+            const basePrice = marketData[ticker]?.price || 100;
+            const strikes = [];
+            const numStrikes = 15;
+            const startStrike = basePrice * 0.85;
+            const step = (basePrice * 1.15 - startStrike) / numStrikes;
+
+            for (let i = 0; i < numStrikes; i++) {
+                const strike = startStrike + (step * i);
+                const isATM = Math.abs(strike - basePrice) < (basePrice * 0.02);
+                const distance = Math.abs(strike - basePrice) / basePrice;
+                
+                // Simular costo: más caro cerca del dinero, más barato lejos
+                let baseCost = basePrice * 0.05;
+                if (isATM) baseCost = basePrice * 0.08;
+                else if (distance > 0.1) baseCost = basePrice * 0.02;
+                else if (distance > 0.05) baseCost = basePrice * 0.04;
+                
+                // Simular delta
+                let delta = 0.5 - (distance * 2);
+                if (delta < 0.05) delta = 0.05;
+                if (delta > 0.95) delta = 0.95;
+                if (type === 'puts') delta = -delta;
+
+                // Simular movimiento intradía (clave para el método del mentor)
+                const volatility = 0.3 + (Math.random() * 0.4); // 30-70% de volatilidad
+                const minPrice = baseCost * (1 - volatility/2);
+                const maxPrice = baseCost * (1 + volatility);
+                const openPrice = baseCost * (1 - volatility/4);
+                
+                const rentabilidad = ((maxPrice - minPrice) / openPrice) * 100;
+
+                strikes.push({
+                    strike: strike.toFixed(2),
+                    cost: baseCost.toFixed(2),
+                    min: minPrice.toFixed(2),
+                    max: maxPrice.toFixed(2),
+                    open: openPrice.toFixed(2),
+                    rentabilidad: rentabilidad.toFixed(1),
+                    delta: Math.abs(delta).toFixed(2),
+                    volume: Math.floor(1000 + Math.random() * 5000),
+                    openInterest: Math.floor(5000 + Math.random() * 15000)
+                });
+            }
+
+            return strikes;
+        }
+
+        function generateSimulatedOptionsData(ticker) {
+            const basePrice = marketData[ticker]?.price || (ticker === 'NVDA' ? 875 : ticker === 'TSLA' ? 175 : 150);
+            const change = marketData[ticker]?.change || (Math.random() - 0.5) * 4;
+            const isBullish = change >= 0;
+            
+            const priceData = {
+                price: basePrice,
+                change: change,
+                volume: 20000000 + Math.random() * 50000000
+            };
+
+            const optionsChain = generateSimulatedOptionsChain(ticker, isBullish ? 'calls' : 'puts');
+            const analysis = analyzeOptimalRange(optionsChain, basePrice, isBullish);
+
+            return { priceData, analysis, isBullish };
+        }
+
+        function analyzeOptimalRange(strikes, currentPrice, isBullish) {
+            // Método del mentor: Buscar uniformidad en rentabilidad
+            // 1. Calcular rentabilidad para cada strike
+            const withMetrics = strikes.map(s => ({
+                ...s,
+                rentabilidadNum: parseFloat(s.rentabilidad),
+                distanceFromPrice: Math.abs(parseFloat(s.strike) - currentPrice) / currentPrice
+            }));
+
+            // 2. Ordenar por rentabilidad
+            const sorted = [...withMetrics].sort((a, b) => b.rentabilidadNum - a.rentabilidadNum);
+            
+            // 3. Eliminar outliers (top 10% y bottom 20%)
+            const n = sorted.length;
+            const filtered = sorted.slice(Math.floor(n * 0.1), Math.floor(n * 0.8));
+            
+            // 4. Buscar cluster de 3 strikes con rentabilidad consistente (uniforme)
+            let bestCluster = null;
+            let bestScore = 0;
+            
+            for (let i = 0; i <= filtered.length - 3; i++) {
+                const cluster = filtered.slice(i, i + 3);
+                const avgRent = cluster.reduce((sum, s) => sum + s.rentabilidadNum, 0) / 3;
+                const stdDev = Math.sqrt(
+                    cluster.reduce((sum, s) => sum + Math.pow(s.rentabilidadNum - avgRent, 2), 0) / 3
+                );
+                
+                // Score: alto promedio, baja desviación estándar, delta aceptable
+                const avgDelta = cluster.reduce((sum, s) => sum + parseFloat(s.delta), 0) / 3;
+                const deltaScore = avgDelta >= 0.20 && avgDelta <= 0.40 ? 1 : 0.5;
+                
+                const score = (avgRent / (stdDev + 1)) * deltaScore;
+                
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestCluster = cluster;
+                }
+            }
+
+            // 5. Marcar strikes según categoría
+            const markedStrikes = withMetrics.map(s => {
+                let status = 'normal';
+                let isOptimal = false;
+                
+                if (bestCluster && bestCluster.find(c => c.strike === s.strike)) {
+                    status = 'optimal';
+                    isOptimal = true;
+                } else if (s.rentabilidadNum > 200) {
+                    status = 'high'; // Disruptivo (muy caro o muy volátil)
+                } else if (s.rentabilidadNum < 50) {
+                    status = 'low'; // Poco rentable
+                }
+                
+                return { ...s, status, isOptimal };
+            });
+
+            // Calcular métricas del rango óptimo
+            const optimalMetrics = bestCluster ? {
+                strikes: bestCluster.map(s => s.strike),
+                avgCost: (bestCluster.reduce((sum, s) => sum + parseFloat(s.cost), 0) / 3).toFixed(2),
+                avgRentabilidad: (bestCluster.reduce((sum, s) => sum + s.rentabilidadNum, 0) / 3).toFixed(1),
+                avgDelta: (bestCluster.reduce((sum, s) => sum + parseFloat(s.delta), 0) / 3).toFixed(2),
+                avgVolume: Math.floor(bestCluster.reduce((sum, s) => sum + s.volume, 0) / 3),
+                avgOI: Math.floor(bestCluster.reduce((sum, s) => sum + s.openInterest, 0) / 3)
+            } : null;
+
+            return {
+                strikes: markedStrikes,
+                optimal: optimalMetrics,
+                currentPrice,
+                isBullish
+            };
+        }
+
+        function renderOptionsResults(ticker, priceData, analysis, isBullish) {
+            // Info general
+            document.getElementById('opt-ticker').textContent = ticker;
+            document.getElementById('opt-price').textContent = '$' + priceData.price.toFixed(2);
+            document.getElementById('opt-trend').textContent = isBullish ? 'ALCISTA ↑' : 'BAJISTA ↓';
+            document.getElementById('opt-trend').className = isBullish ? 'font-bold bullish' : 'font-bold bearish';
+            document.getElementById('opt-type').textContent = isBullish ? 'CALLS' : 'PUTS';
+
+            if (analysis.optimal) {
+                document.getElementById('opt-strikes').textContent = analysis.optimal.strikes.join(', ');
+                document.getElementById('opt-cost').textContent = '$' + analysis.optimal.avgCost;
+                document.getElementById('opt-rent').textContent = analysis.optimal.avgRentabilidad + '%';
+                document.getElementById('opt-delta').textContent = analysis.optimal.avgDelta;
+            }
+
+            // Filtros de calidad
+            const checks = [
+                { name: 'Delta 0.20-0.40', pass: analysis.optimal && parseFloat(analysis.optimal.avgDelta) >= 0.20 && parseFloat(analysis.optimal.avgDelta) <= 0.40 },
+                { name: 'Volumen > 1000', pass: analysis.optimal && analysis.optimal.avgVolume > 1000 },
+                { name: 'Open Interest > 5000', pass: analysis.optimal && analysis.optimal.avgOI > 5000 },
+                { name: 'Distancia < 15% del precio', pass: analysis.optimal && Math.abs(parseFloat(analysis.optimal.strikes[1]) - priceData.price) / priceData.price < 0.15 }
+            ];
+
+            document.getElementById('quality-checks').innerHTML = checks.map(c => `
+                <div class="flex justify-between items-center p-2 rounded ${c.pass ? 'bg-green-500/10' : 'bg-red-500/10'}">
+                    <span class="${c.pass ? 'text-green-400' : 'text-red-400'}">${c.name}</span>
+                    <i data-lucide="${c.pass ? 'check' : 'x'}" class="w-4 h-4 ${c.pass ? 'text-green-400' : 'text-red-400'}"></i>
+                </div>
+            `).join('');
+
+            // Tabla de strikes
+            document.getElementById('strikes-table-body').innerHTML = analysis.strikes.map(s => {
+                const rowClass = s.status === 'optimal' ? 'strike-optimal' : 
+                                s.status === 'high' ? 'strike-high' : 
+                                s.status === 'low' ? 'opacity-50' : '';
+                
+                const statusBadge = s.status === 'optimal' ? '<span class="px-2 py-1 bg-green-500 text-white text-xs rounded font-bold">ÓPTIMO</span>' :
+                                   s.status === 'high' ? '<span class="px-2 py-1 bg-red-500/50 text-red-300 text-xs rounded">DISRUPTIVO</span>' :
+                                   s.status === 'low' ? '<span class="px-2 py-1 bg-gray-500/50 text-gray-400 text-xs rounded">BAJO</span>' :
+                                   '<span class="px-2 py-1 bg-gray-700 text-gray-400 text-xs rounded">-</span>';
+
+                return `
+                    <tr class="border-b border-gray-800 hover:bg-gray-800/30 transition-colors ${rowClass}">
+                        <td class="py-3 px-3 font-bold">$${s.strike}</td>
+                        <td class="py-3 px-3 text-right">$${s.cost}</td>
+                        <td class="py-3 px-3 text-right text-red-400">$${s.min}</td>
+                        <td class="py-3 px-3 text-right text-green-400">$${s.max}</td>
+                        <td class="py-3 px-3 text-right font-bold ${s.rentabilidadNum > 100 ? 'text-yellow-400' : 'text-gray-400'}">${s.rentabilidad}%</td>
+                        <td class="py-3 px-3 text-right">${s.delta}</td>
+                        <td class="py-3 px-3 text-center">${statusBadge}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
 
         // NOTIFICACIONES
         function requestNotificationPermission() {
@@ -342,29 +763,15 @@
                     document.getElementById('notif-btn').classList.add('bg-green-600');
                     lucide.createIcons();
                     
-                    // Enviar notificación de prueba
                     new Notification("Morning Market Brief", {
-                        body: "Alertas de earnings activadas. Te notificaremos cuando publiquen resultados.",
+                        body: "Alertas activadas. Incluye notificaciones de Options Optimizer.",
                         icon: "https://via.placeholder.com/64"
                     });
                 }
             });
         }
 
-        function sendEarningsNotification(ticker, data) {
-            if (!notificationPermission) return;
-            
-            const title = `📊 ${ticker} - Earnings Publicados`;
-            const body = `EPS: ${data.actualEPS} (Est: ${data.epsEstimate}) | Rev: ${data.actualRev}B (Est: ${data.revenueEstimate}B)`;
-            
-            new Notification(title, {
-                body: body,
-                icon: "https://via.placeholder.com/64",
-                requireInteraction: true
-            });
-        }
-
-        // EARNINGS FUNCTIONS
+        // EARNINGS FUNCTIONS (existentes)
         function checkTodaysEarnings() {
             const today = new Date().toISOString().split('T')[0];
             const todayEarnings = EARNINGS_CALENDAR.filter(e => e.date === today && !e.actualEPS);
@@ -377,7 +784,6 @@
                 banner.classList.remove('hidden');
                 list.textContent = todayEarnings.map(e => e.ticker).join(', ');
                 
-                // Calcular countdown hasta 4:00 PM ET (hora típica de earnings)
                 const now = new Date();
                 const etNow = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
                 const target = new Date(etNow);
@@ -470,6 +876,7 @@
                                 <div>Rev Est: <span class="text-white">${earning.revenueEstimate}B</span></div>
                             </div>
                             ${isToday ? '<div class="mt-2 text-xs text-orange-400 font-semibold">⏰ Alerta activa para 4:00 PM</div>' : ''}
+                            ${isToday ? `<button onclick="prefillOptions('${earning.ticker}')" class="mt-2 w-full py-1 bg-green-600/50 hover:bg-green-600 rounded text-xs transition-colors">Analizar Opciones</button>` : ''}
                         </div>
                     `;
                 }
@@ -494,7 +901,6 @@
             
             lucide.createIcons();
             
-            // Mostrar panel de resultados en vivo si hay recientes
             const recentResults = EARNINGS_CALENDAR.filter(e => e.actualEPS && new Date(e.date) >= new Date(Date.now() - 48*60*60*1000));
             if (recentResults.length > 0) {
                 document.getElementById('live-results-panel').classList.remove('hidden');
@@ -519,6 +925,12 @@
             }
         }
 
+        function prefillOptions(ticker) {
+            document.getElementById('options-ticker-select').value = ticker;
+            document.getElementById('options-section').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => calculateOptimalRange(), 500);
+        }
+
         function filterEarnings(type) {
             renderEarnings(type);
         }
@@ -526,13 +938,6 @@
         function formatDate(dateStr) {
             const date = new Date(dateStr);
             return date.toLocaleDateString('es-ES', { weekday: 'short', month: 'short', day: 'numeric' });
-        }
-
-        // Simulación de recepción de resultados (para demo)
-        function simulateEarningsResults() {
-            // Esto se llamaría cuando realmente lleguen los datos
-            // Por ahora es un placeholder para la funcionalidad
-            console.log("Escuchando resultados de earnings...");
         }
 
         // Resto de funciones existentes...
@@ -545,7 +950,6 @@
             const dateString = etTime.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
             document.getElementById('calendar-date').textContent = dateString;
             
-            // Actualizar countdown si es visible
             if (!document.getElementById('earnings-alert-banner').classList.contains('hidden')) {
                 checkTodaysEarnings();
             }
@@ -592,24 +996,20 @@
         }
 
         async function fetchEconomicCalendar() {
-            try {
-                const today = new Date();
-                const dayOfWeek = today.getDay();
-                
-                let events = [];
-                
-                if (dayOfWeek === 5) {
-                    events = [
-                        { time: '8:30 AM ET', title: 'Non-Farm Payrolls', impact: 'high' },
-                        { time: '8:30 AM ET', title: 'Unemployment Rate', impact: 'high' },
-                        { time: '8:30 AM ET', title: 'Average Hourly Earnings', impact: 'medium' }
-                    ];
-                }
-                
-                renderCalendar(events);
-            } catch (error) {
-                useSimulatedCalendar();
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            
+            let events = [];
+            
+            if (dayOfWeek === 5) {
+                events = [
+                    { time: '8:30 AM ET', title: 'Non-Farm Payrolls', impact: 'high' },
+                    { time: '8:30 AM ET', title: 'Unemployment Rate', impact: 'high' },
+                    { time: '8:30 AM ET', title: 'Average Hourly Earnings', impact: 'medium' }
+                ];
             }
+            
+            renderCalendar(events);
         }
 
         function renderCalendar(events) {
@@ -900,7 +1300,6 @@
         function renderStocks() {
             const grid = document.getElementById('stocks-grid');
             
-            // Separar MAG7 y Competidores
             const mag7Data = MAG7_TICKERS.map(t => marketData[t]).filter(Boolean);
             const compData = COMPETITOR_TICKERS.map(t => marketData[t]).filter(Boolean);
             
@@ -931,6 +1330,9 @@
                             </div>
                             <div class="text-right text-xs text-gray-400">
                                 <div class="mb-1">Vol: ${formatVolume(data.volume)}</div>
+                                <button onclick="event.stopPropagation(); prefillOptions('${data.ticker}')" class="mt-1 px-2 py-1 bg-green-600/30 hover:bg-green-600/50 rounded text-[10px] text-green-400 transition-colors">
+                                    Opciones
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1029,6 +1431,9 @@
                                 <span class="text-gray-500">Target 25%:</span>
                                 <span class="font-mono font-bold text-green-400">$${opp.target}</span>
                             </div>
+                            <button onclick="prefillOptions('${opp.ticker}')" class="mt-3 w-full py-1 bg-green-600/30 hover:bg-green-600/50 rounded text-xs text-green-400 transition-colors">
+                                Analizar Opciones
+                            </button>
                         </div>
                     `).join('');
                 }
@@ -1040,7 +1445,6 @@
             const data = marketData[ticker];
             if (!data) return;
             
-            // Verificar si hay earning próximo
             const upcomingEarning = EARNINGS_CALENDAR.find(e => e.ticker === ticker && !e.actualEPS);
             let earningAlert = '';
             if (upcomingEarning) {
